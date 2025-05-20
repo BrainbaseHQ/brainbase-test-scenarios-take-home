@@ -92,7 +92,33 @@ type EdgeCondition =
     };
 ```
 
+You can modify these definitions if you prefer.
 
+Example:
+
+Let's say we have the Based code:
+
+```python
+say("Hello how are you today?")
+user_info = <api request>
+loop:
+  res = talk("Talk to the user about their day.", True)
+until "user says they're bored":
+  say("I'm sorry to hear that")
+
+  if user_info["married"]:
+    loop:
+      res_counsel = talk("Recommend the user talk to their spouse", True)
+    until "user says okay":
+      <api post request to update user state>
+      say("Amazing, talk to you later!")
+      end()
+  
+until "user says they're excited about their day":
+  <api post request to update user state>
+  say("That's awesome, my job here is done!)
+  end()
+```
 
 ### Milestone 2: Agent that can generate Based diffs and apply
 Modify your first agent to output not full Based code but unified diffs on the code written so far and then apply them. Should still be able to iterate. When the diff format is wrong, there should be a checker that notices the diff format is wrong and has the LLM redo it. It runs the Based code (python example:
