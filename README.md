@@ -42,6 +42,56 @@ We expect you to approach this task in steps which have associated milestones:
 ### Milestone 1: Convert Based into nodes
 Create a function that will take in a piece of Based code as `string` and output a `nodes` list.
 
+A Based flow can only have the following node types:
+- Based node: A multiline code node with no `if`s or `case`s
+- Loop-until node: A node that runs a `talk` function
+- Switch node: A node that has one edge coming in and N edges going out
+- If node: A specialized switch node
+
+A node should have the approximate format: 
+
+```javascript
+type Node = {
+  id: string; // Unique identifier
+  type: string; // e.g., "loop-until", "based", "if", "switch"
+  name: string; // Display name
+
+  inputs: Port[]; // Optional, for custom port behavior
+  outputs: Port[];
+
+  data: Record<string, any>; // Config data specific to the node type, e.g. based nodes would keep a `code` variable, loop-until nodes would keep a `prompt` variable
+};
+
+type Port = {
+  id: string;
+  name: string;
+  type?: "input" | "output";
+};
+
+type Edge = {
+  id: string;
+  source: {
+    nodeId: string;
+    portId?: string;
+  };
+  target: {
+    nodeId: string;
+    portId?: string;
+  };
+  condition?: EdgeCondition;
+};
+
+type EdgeCondition =
+  | {
+      type: "ai";
+      prompt: string; // natural language condition, e.g. "if user sounds angry"
+    }
+  | {
+      type: "logic";
+      expression: string; // Python-style, e.g. "input.value > 10"
+    };
+```
+
 
 
 ### Milestone 2: Agent that can generate Based diffs and apply
