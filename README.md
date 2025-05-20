@@ -16,29 +16,33 @@ The Automated Testing Suite will work as follows:
 
 ## Stack
 
-Kafka has a frontend (client) and a backend (AI server).
+Brainbase has a frontend (client) and a backend (AI server).
 
 Frontend: NextJS, React, TypeScript, Tailwind CSS, Shadcn
 Backend: Python or TypeScript
 
 ### Frontend
-Kafka's frontend should look similar to Cursor/Windsurf and should be styled similarly to the following, internal version we have of Kafka:
+The UI should look similar to the following screenshot from our main platform client:
 
-<img width="1512" alt="image" src="https://github.com/user-attachments/assets/d8c13d2e-3147-4ded-b9cf-924f50673a8f" />
+<img width="1512" alt="image" src="https://github.com/user-attachments/assets/b76fea94-a16d-4ea9-b17b-f4687877d2f1" />
 
-You are encouraged to use any frontend framework to copy this UI such as Bolt.new or Lovable.
+The testing suite will be included as a new tab on the left.
 
 ### Backend
-Kafka's backend needs to be written in Python or TypeScript and must be stateful (websocket connection). Here, there are no constraints on the agent framework underneath, however we've seen the best working ones to be just using pure LLMs that are provided necessary context and output diffs.
+Automated Testing's backend needs to be written in Python or TypeScript and must be an API server. This API will need to have endpoints for:
 
-We suggest using unified diff format and applying changes using https://gist.github.com/noporpoise/16e731849eb1231e86d78f9dfeca3abc.
-
+- `/based/node`: Endpoint for analyzing incoming Based code snippets and convert them to node format (more details below).
+- `/based/paths`: Endpoint for creating all the possible paths the conversation can take recursively.
+- `/based/scenario`: Endpoint for creating a simulated scenario given a path.
+- `/based/test`: Endpoint for initializing a test given a scenario (note that running a conversation will be too long for a single API request, so this request would take the test request, add it to a queue and run it in a worker)
+  
 ## Milestones
 We expect you to approach this task in steps which have associated milestones:
 
-### Milestone 1: Agent that can generate Based code
-Create an agent that will take resources provided (including `BASED_GUIDE.md`) and be able to write simple Based code as output (not diff). The agent should use the knowledge from the Based documentation to write Based.
-Exit criteria for milestone: Agent can write simple Based code
+### Milestone 1: Convert Based into nodes
+Create a function that will take in a piece of Based code as `string` and output a `nodes` list.
+
+
 
 ### Milestone 2: Agent that can generate Based diffs and apply
 Modify your first agent to output not full Based code but unified diffs on the code written so far and then apply them. Should still be able to iterate. When the diff format is wrong, there should be a checker that notices the diff format is wrong and has the LLM redo it. It runs the Based code (python example:
