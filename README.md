@@ -1,5 +1,7 @@
-# Brainbase – Vibe-code Agents
-Brainbase is a powerful tool for provisioning complex AI agents. Even though our language can be written by humans, it was actually built to be written by AI, so that anyone, technical or non-technical can create their own agent just by talking.
+# Brainbase – Automated Testing
+Brainbase is a powerful tool for provisioning complex AI agents. It uses a language we developed called Based to provisiton AI agents.
+
+These agents are able to use both deterministic, Python-like code as well as fuzzy LLM logic together which makes them very powerful.
 
 We call it *vibe-coding your agents*.
 
