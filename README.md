@@ -47,6 +47,8 @@ A Based flow can only have the following node types:
 - Loop-until node: A node that runs a `talk` function
 - Switch node: A node that has one edge coming in and N edges going out
 - If node: A specialized switch node
+- End node: A node that indicates the conversation is over
+- Jump node: A node that indicates a jump to a different node
 
 A node should have the approximate format: 
 
@@ -116,8 +118,217 @@ until "user says they're bored":
   
 until "user says they're excited about their day":
   <api post request to update user state>
-  say("That's awesome, my job here is done!)
-  end()
+  say("That's awesome, let's keep talking then!")
+  return "Keep talking to the user"  # this goes back to the high level loop-until node
+```
+
+This should give the following nodes and edges:
+
+```yaml
+nodes:
+  - id: start
+    type: based
+    name: Start
+    inputs: []
+    outputs:
+      - id: out_start
+        name: next
+    data:
+      code: |
+        say("Hello how are you today?")
+        user_info = <api request>
+
+  - id: loop_1
+    type: loop-until
+    name: Talk about their day
+    inputs:
+      - id: in_loop_1
+        name: input
+    outputs:
+      - id: out_bored
+        name: "user says they're bored"
+      - id: out_excited
+        name: "user says they're excited about their day"
+    data:
+      prompt: "Talk to the user about their day."
+      until: 
+        - "user says they're bored"
+        - "user says they're excited about their day"
+
+  - id: bored_reaction
+    type: based
+    name: User is bored
+    inputs:
+      - id: in_bored_reaction
+        name: input
+    outputs:
+      - id: out_if_married
+        name: check marriage
+    data:
+      code: say("I'm sorry to hear that")
+
+  - id: if_married
+    type: if
+    name: Check if user is married
+    inputs:
+      - id: in_if_married
+        name: input
+    outputs:
+      - id: out_married
+        name: "True"
+      - id: out_not_married
+        name: "False"
+    data:
+      condition: "user_info['married']"
+
+  - id: talk_to_spouse
+    type: loop-until
+    name: Suggest spouse talk
+    inputs:
+      - id: in_talk_to_spouse
+        name: input
+    outputs:
+      - id: out_user_says_okay
+        name: "user says okay"
+    data:
+      prompt: "Recommend the user talk to their spouse"
+      until:
+        - "user says okay"
+
+  - id: married_action
+    type: based
+    name: Married - Final Action
+    inputs:
+      - id: in_married_action
+        name: input
+    outputs:
+      - id: out_married_end
+        name: next
+    data:
+      code: |
+        <api post request to update user state>
+        say("Amazing, talk to you later!")
+
+  - id: married_end
+    type: end
+    name: End (Married Path)
+    inputs:
+      - id: in_married_end
+        name: input
+    outputs: []
+    data: {}
+
+  - id: excited_action
+    type: based
+    name: Excited - Keep Talking
+    inputs:
+      - id: in_excited_action
+        name: input
+    outputs:
+      - id: out_jump_back_to_loop
+        name: next
+    data:
+      code: |
+        <api post request to update user state>
+        say("That's awesome, let's keep talking then!")
+        return "Keep talking to the user"
+
+  - id: jump_back_to_loop
+    type: jump
+    name: Jump back to outer loop
+    inputs:
+      - id: in_jump_back
+        name: input
+    outputs:
+      - id: out_jump_loop
+        name: jump
+    data:
+      targetNodeId: loop_1
+
+edges:
+  - id: edge_start_to_loop
+    source:
+      nodeId: start
+      portId: out_start
+    target:
+      nodeId: loop_1
+      portId: in_loop_1
+
+  - id: edge_loop_to_bored
+    source:
+      nodeId: loop_1
+      portId: out_bored
+    target:
+      nodeId: bored_reaction
+      portId: in_bored_reaction
+    condition:
+      type: ai
+      prompt: "user says they're bored"
+
+  - id: edge_bored_to_if
+    source:
+      nodeId: bored_reaction
+      portId: out_if_married
+    target:
+      nodeId: if_married
+      portId: in_if_married
+
+  - id: edge_if_true
+    source:
+      nodeId: if_married
+      portId: out_married
+    target:
+      nodeId: talk_to_spouse
+      portId: in_talk_to_spouse
+    condition:
+      type: logic
+      expression: "user_info['married'] == True"
+
+  - id: edge_talk_to_spouse_to_action
+    source:
+      nodeId: talk_to_spouse
+      portId: out_user_says_okay
+    target:
+      nodeId: married_action
+      portId: in_married_action
+    condition:
+      type: ai
+      prompt: "user says okay"
+
+  - id: edge_married_action_to_end
+    source:
+      nodeId: married_action
+      portId: out_married_end
+    target:
+      nodeId: married_end
+      portId: in_married_end
+
+  - id: edge_loop_to_excited
+    source:
+      nodeId: loop_1
+      portId: out_excited
+    target:
+      nodeId: excited_action
+      portId: in_excited_action
+    condition:
+      type: ai
+      prompt: "user says they're excited about their day"
+
+  - id: edge_excited_action_to_jump
+    source:
+      nodeId: excited_action
+      portId: out_jump_back_to_loop
+    target:
+      nodeId: jump_back_to_loop
+      portId: in_jump_back
+
+  - id: edge_jump_back_to_loop
+    source:
+      nodeId: jump_back_to_loop
+      portId: out_jump_loop
+    target:
+      nodeId: loop_1
+      portId: in_loop_1
 ```
 
 ### Milestone 2: Agent that can generate Based diffs and apply
