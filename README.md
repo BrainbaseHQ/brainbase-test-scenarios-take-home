@@ -3,18 +3,16 @@ Brainbase is a powerful tool for provisioning complex AI agents. It uses a langu
 
 These agents are able to use both deterministic, Python-like code as well as fuzzy LLM logic together which makes them very powerful.
 
-We call it *vibe-coding your agents*.
-
-We want you to build an early version of our next flagship product: Kafka
+We want you to build a new version of our automated test suite that will allows our users to automatically test their Based flows across all possible scenarios.
 
 ## Specifications
-Kafka is our version of Cursor/Windsurf for vibe coding AI agents, which works very similarly.
+The Automated Testing Suite will work as follows:
 
-1. The user starts off by describing their idea
-2. Kafka creates a `.based` file based on the request
-3. The user describes changes and modifications to the agent
-4. Kafka creates changes in the form of code diffs and applies them when the user accepts
-5. Kafka verifies the written code using the Brainbase Based docs (see below)
+1. The user creates a Based flow
+2. The Automated Testing suite takes this piece of Based code and analyzes all possible scenarios in a recursive fashion
+3. Based on each identified potential path, the Testing Suite makes a simulated scenario with dummy information
+4. Testing Suite connects to Brainbase's Engine and tests these scenarios in a back-and-forth text conversation
+5. Testing Suite reports the transcripts and the outcomes to the user
 
 ## Stack
 
