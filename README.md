@@ -40,6 +40,9 @@ Automated Testing's backend needs to be written in Python or TypeScript and must
 We expect you to approach this task in steps which have associated milestones:
 
 ### Milestone 1: Convert Based into nodes
+
+You should see an example file containing based called example.based. Feel free to use this as a reference for this project, or create a Based flow yourself. 
+
 Create a function that will take in a piece of Based code as `string` and output a `nodes` list.
 
 A Based flow can only have the following node types:
@@ -349,6 +352,14 @@ This is a simple example, in real Based flows the scenarios will have a lot more
 Now that you can generate scenarios for each possible path in a Based flow, you can start testing out agents.
 
 For this, follow https://github.com/BrainbaseHQ/brainbase-ws-client to connect to your Based flows, and test out each scenario by spinning up an LLM to speak to our Based agent.
+
+## How to get an API Key and Create a Flow
+
+* Navigate to beta.usebrainbase.com and make an account
+* Click Add new on the Workers tab to create a worker
+* Navigate to the flow tab to begin writing and testing your flow
+* **API Key** You can generate an API key by navigating to https://beta.usebrainbase.com/dashboard/settings and scrolling down to the API Keys section
+
 
 ## Rules and Guidelines
 - Using coding assistants such as ChatGPT, Claude, Cursor and other are absolutely allowed and strongly encouraged. If you can build this entire project through vibe coding we have no problem with it :)
