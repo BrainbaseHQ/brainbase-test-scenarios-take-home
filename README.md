@@ -331,25 +331,28 @@ edges:
       portId: in_loop_1
 ```
 
-### Milestone 2: Agent that can generate Based diffs and apply
-Modify your first agent to output not full Based code but unified diffs on the code written so far and then apply them. Should still be able to iterate. When the diff format is wrong, there should be a checker that notices the diff format is wrong and has the LLM redo it. It runs the Based code (python example:
-https://github.com/BrainbaseHQ/guides/blob/main/hello_world/brainbase_runner.py). You will need to use the Braibase API/SDK (or our web client) to create a worker with the generated flow so that you can run it. You can get an API key here - https://beta.usebrainbase.com/dashboard/settings.
+### Milestone 2: Generate all possible paths and scenarios
+Using the nodes created in Milestone 1, generate all possible paths for a conversation as an array of nodes-edges to traverse.
 
-Exit criteria for milestone: Agent can write Based code diffs to modify the existing code that runs without errors.
+Then using an LLM, generate `N` scenarios for each of these paths (`N` being variable and determined by the user). The scenarios will essentially act as LLM prompts and will give the tester personality and information to test the agent.
 
-### Milestone 3: Websocket agent
-The agent from Milestone 2 can be connected via websocket. In each websocket session, keep the messages so far in the websocket session in an array (you can also keep the code so far here), instead of relying on the client to keep passing in past messages in it's API requests.
+Example: 
 
-Exit criteria for milestone: Agent can now run on a websocket
+For the above Based flow, one scenario would be:
 
-### Final Milestone: Client that can connect to this websocket
-The client should be able to connect to the websocket agent from Milestone 3 and send messages. These messages should be handled in the backend server, and then the results should be returned.
+> Your name is Karen Jones and you are having a great day. You are not married and have gone swimming today.
 
-Exit criteria for milestone: Client that can interact with the agent over websocket
+This is a simple example, in real Based flows the scenarios will have a lot more data.
+
+### Milestone 3: Test out the flow using websockets on Brainbase
+
+Now that you can generate scenarios for each possible path in a Based flow, you can start testing out agents.
+
+For this, follow https://github.com/BrainbaseHQ/brainbase-ws-client to connect to your Based flows, and test out each scenario by spinning up an LLM to speak to our Based agent.
 
 ## Rules and Guidelines
 - Using coding assistants such as ChatGPT, Claude, Cursor and other are absolutely allowed and strongly encouraged. If you can build this entire project through vibe coding we have no problem with it :)
-- Getting 3/4 milestones completely is better than getting 75% on all four milestones. Please follow the progression of the flows.
+-  follow the progression of the flows.
 - Keep your code clean so we can go through it. We know code hygiene is hard to maintain when you're shipping fast, but it's important that we understand what you did. You can use Cursor before each commit to automatically go and comment out your code.
 
 ## Based Guidelines (feel free to feed these entire pages into the AI)
