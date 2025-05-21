@@ -1,0 +1,232 @@
+GLOBAL_PROMPT = """ 
+You are a call center agent for Silver and Fit. Here is some information about Silver and fit: Disclaimer
+Before beginning any exercise or weight management program, you should consult your physician or another qualified health professional. The information below provides an overview of the Silver&Fit program but does not list all possible benefits or features. Availability varies by area and by your specific plan—log in to your Silver&Fit account to see your exact benefits.
+
+Secure Two‑Step Sign‑In (Multi‑Factor Authentication)
+Silver&Fit is rolling out an optional multi‑factor authentication (MFA) feature—requiring both your password and a one‑time security code—to better protect member accounts. Existing users simply enter their username and password, then choose to receive a code via email or SMS, click Send Code, enter the code and click Verify Code, and will thereafter be prompted every 60 days to repeat. New users set up MFA immediately after creating their username and password. Any phone number or email you provide is stored securely and used only for MFA purposes (not marketing)—see the Privacy Statement on SilverandFit.com for full details. If you mistype your code too many times, you’ll need to wait 30 minutes before requesting another, or you can use the “forgot your username or password?” link. MFA becomes mandatory for all users on April 10, 2025.
+
+Program Description
+Silver&Fit empowers members with:
+
+No‑ or low‑cost gym access through a network of participating fitness centers and select YMCAs (with an option to “buy up” to Premium locations for an extra monthly fee).
+
+Home workouts via one Home Fitness Kit per benefit year, redeemable online from third‑party vendors (kits cannot be exchanged once selected; shipping times vary).
+
+Digital resources including personalized 14‑day Workout Plans based on an online fitness survey, on‑demand exercise videos, live virtual events, articles, and the quarterly Silver Slate newsletter.
+
+Well‑Being Coaching (phone, video, or chat) and activity tracking with the Silver&Fit Connected! tool.
+
+Community features like the Well‑Being Club for themed content and social clubs links (Silver&Fit does not share your data with those external sites).
+
+Fitness Center Membership
+Joining a gym: Log in at SilverandFit.com, search for a location under “Find Your Fitness Center,” enroll online, and print or download your Silver&Fit card (present it at the gym). If you have a non‑refundable program fee, you’ll pay by credit or debit card at enrollment.
+
+Premium buy‑up option: Pay location‑specific monthly fees for Premium centers; upon enrollment you pay the current and next month, and your subscription renews monthly through your benefit year unless canceled with 30 days’ notice (fees are non‑refundable).
+
+Multiple enrollments: You may join more than one Premium location—fees apply per location.
+
+Existing gym membership: If your current gym or YMCA is in the Silver&Fit network, you can freeze your personal membership, enroll in Silver&Fit, and use your Silver&Fit card there. Otherwise, you must switch to a participating location.
+
+Fitness ID card: Your fitness ID number appears next to your name at the top of the site; your printable card is on the dashboard.
+
+Nominate a gym: Under “Find Your Fitness Center,” select “Nominate a Fitness Center,” provide its details, and allow 4–6 months for it to join.
+
+Changing gyms: Use “Manage Memberships” to switch or add locations—some plans let you change immediately, others at the start of the next month; check your offerings online. Annual fees are charged once per benefit year; monthly fees continue when you change centers.
+
+Gym network changes: If a gym leaves Silver&Fit, you’ll get a letter (30 days’ notice when possible) listing nearby alternatives and can choose a new location online or via Customer Service.
+
+Complaints: ASH Fitness investigates complaints via letters, site visits, or “secret shopper” calls; for immediate issues contact the gym manager or Silver&Fit customer service.
+
+Home Fitness Kits
+Members select kits on the Home Kits page, redeem a promo code on the vendor’s site, and have the kit shipped to them. Kits (and item colors) may vary; codes can’t be combined with other promotions, and selections are final.
+
+Website Features & Digital Tools
+Forgot username/password: Click “Log In,” then the Username or Password link, and follow the prompts; if you haven’t validated your email, contact support via chat, email (FitnessService@ashn.com), or phone (1.877.427.4788, TTY 711).
+
+Well‑Being Club: A personalized hub for articles, live virtual events, and community connections across interests like nutrition, mindfulness, and fitness.
+
+Workout Plans: Complete a short online questionnaire on the Well‑Being Club page to generate a 14‑day plan tailored to your goals.
+
+Digital resources: On‑demand videos, the Silver Slate newsletter, and public classes on the Silver&Fit Facebook page and YouTube channel.
+
+Silver&Fit Connected! tool: Sync approved wearables or apps to track activity, earn points, and unlock rewards; setup is via the “Manage Apps/Devices” list on the Connected! page. Activity may take time to populate on the site, and ASH Fitness isn’t responsible for delays or missing data.
+
+Apple Watch syncing: Use the ASHSync app—download from the App Store, log in with your Silver&Fit credentials, connect Apple Health + Apple Watch, and grant permissions in the iPhone Health app. You can disconnect at any time.
+
+Earning rewards: Points and reward thresholds depend on your health plan. You can earn by syncing devices/apps, completing digital workouts, or gym visits. You must opt in before any activities count. If you use multiple devices/apps in one day, only the highest‑point source counts; manually added data doesn’t apply toward rewards.
+
+Reward types: Your first quarterly reward is a collectible hat (visor, cap, or floppy hat). Subsequent quarterly thresholds earn collectible pins. Rewards ship within 14 days of achievement.
+
+Leaving the program: Cancel paid gym memberships under “Manage Memberships” (fees non‑refundable; program ends on your last paid date). Members with no fees can cancel online or via Customer Service.
+
+Workout Classes on Facebook & YouTube
+Silver&Fit’s 30‑minute, instructor‑led classes are free and open to all fitness levels. New classes post Monday–Friday on the Silver&Fit Facebook page and are always available on the Silver&Fit YouTube channel.
+"""
+
+prompt_1 = """
+Your job is to see if the customer is calling about their own silver and fit memberhip or that of a family member, fitness center, or health plan. If the customer appears confused, offer to transfer them to a service agent.
+"""
+
+prompt_2 = """
+
+Your job is to gather the following customer information, one by one, in exactly this order: First name, Last name, 5-digit ZIP, and full date of birth. 
+
+After you gather each individual piece of information, make sure to confirm with the user, including the spelling. You should display the spelling as, for example, M-A-T-T-H-E-W.  When you confirm their zip code, display it as 1-2-3-4-5-6
+
+Do not call any tool calls until you have gathered **and** confirmed all four pieces of information with the customer. Ask each one by one, and wait for the user to confirm before moving on. DO NOT call the tool call until the user has CONFIRMED their date of birth.
+
+You must repeat back the spelling or the numbers for each one of these items and confirm with the user if that is correct.
+
+"""
+number = state.get("Caller")
+
+email_url = "https://0qjmxkzua1.execute-api.us-east-1.amazonaws.com/default/ash_fake_email_lambda"
+say("Hello, thanks for calling Silver & Fit. I’m a Digital Representative on a recorded line here to help with your Silver & Fit enrollment. Please note you’re not required to provide any health‑related information unless it’s needed to confirm eligibility. Are you calling about your own Silver & Fit membership?")
+loop:
+    res = talk(GLOBAL_PROMPT + prompt_1 , False)
+until "The customer wants or needs to be transferred, or is confused, and you have confirmed with the user they want to be transferred.":
+    say("Please hold while I transfer you to a representative who can help.")
+    time.sleep(4)
+    transfer("+18009488488")
+until "The user answers yes to “Are you calling about your own Silver & Fit membership?” or says they are calling about their own account or fitness ID":
+    loop:
+        res = talk(GLOBAL_PROMPT + prompt_2, True)
+    until "The customer wants or needs to be transferred, or is confused, and you have confirmed with the user they want to be transferred.":
+        say("Please hold while I transfer you to a representative who can help.")
+        time.sleep(4)
+        transfer("+18009488488")
+    until "The customer has provided and confirmed their First name, Last name, 5-digit ZIP, and full date of birth":
+        say("Thank you! Please hold while I look up your member account", exact=True)
+        customer_data = res.ask(question = "What is the customers first name, last name, 5-digit ZIP, and full date of birth? Date of Birth must be in the format YYYY-MM-DD. If they didn't include one of these, make the value 'false' ", example = {"first_name": "Matthew", "last_name": "Koen", "zip": "123456", "dob": "1998-07-30"})
+        first_name = customer_data['first_name']
+        last_name = customer_data['last_name']
+        _zip = customer_data['zip']
+        dob = customer_data['dob']
+
+        fields = {
+            'first_name': first_name,
+            'last_name': last_name,
+            'zip': _zip,
+            'dob': dob
+        }
+
+        missing = [key for key, value in fields.items() if value == 'false']
+        provided = [key for key, value in fields.items() if value != 'false']
+
+        if missing:
+            missing_str = ', '.join(missing)
+            provided_str = ', '.join(provided)
+            message = f"The user didn't provide {missing_str} but did provide these: {provided_str}"
+            return message
+        url = "https://oek6liv3id.execute-api.us-east-1.amazonaws.com/default/ash_fake_api"
+        headers = {"Content-Type": "application/json"}
+        response = api.post_req(url = url, data=fields, headers=headers)
+        say(f"Response: {response}")
+        error = response.get("data", {}).get("error", None)
+        user_email = response.get("data", {}).get("response", {}).get("data", [{}])[0].get("email")
+        
+        if len(response.get("data", {}).get("response", {}).get("data", [{}])) > 1:
+            loop:
+                res= talk(GLOBAL_PROMPT + "You are a smart, logical representative. The customer has multiple accounts under this information with the same email. Your goal is to figure out their correct account for yourself, and help them figure out which account is theirs. If it helps, use the open date and balance. However, you must not disclose either one. Instead, ask if they know when they opened the account or the balance instead any — if it would help them figure out. You can give them the year of the opened accounts if they're in different years to help them remember. If there's nothing else we can try to help them with, offer to put them through to a live agent. Explicitly ask them if they want that, but only offer as a last resort. If all details of their accounts (the open date and balance) are the same, but the fitness IDs are different, also offer to transfer. Your output should typically be one singular account.", True)
+            until "the customer and you have correctly identified the customer's single correct account":
+                pass
+            until "the customer confirms they want to be transferred to a representative or you need to transfer them":
+                say("Please hold while I transfer you to a representative who can help.")
+                time.sleep(4)
+                transfer("+18009488488")
+        if error:
+            loop:
+                res = talk(GLOBAL_PROMPT + f"You used these details for the user: {fields}. Tell the user you were unable to find their account. Gently reconfirm they have a Silver & Fit account. Next, offer to transfer them to a human agent to help further. Confirm with the user first before calling the transfer tool", True)
+            until "The customer wants or needs to be transferred, and you have confirmed with the user they want to be transferred.":
+                say("Please hold while I transfer you to a representative who can help.")
+                time.sleep(4)
+                transfer("+18009488488")
+        loop:
+            res = talk(GLOBAL_PROMPT + f"Here is some data about the user: {response}. Their fitness ID is the ID field" + "Ask the customer something like: Do you need your Fitness ID? I can email it to you if you would like", True)
+        until "The customer asks for their fitness ID to be emailed":
+            say("Hold on one moment while I email you your fitness ID")
+            fitness_id = response.get("data", {}).get("response", {}).get("data", [{}])[0].get("id")
+            payload = {
+                "to": user_email,
+                "subject": "Your Fitness ID from Silver&Fit",
+                "message": f"Here is your fitness ID: {fitness_id}"
+            }
+            api.post_req(url=email_url, data=payload, headers = headers)
+            time.sleep(2)
+            say("I've just sent over your fitness ID. To activate your gym benefit, just bring that Fitness ID to a participating location and tell the front desk you’re joining through Silver & Fit. No membership card required. Is there anything else I can help you with?")
+            time.sleep(11)
+            loop:
+                res = talk(GLOBAL_PROMPT + "Ask them if they'd like help with anything else.", False)
+            until "The customer wants or needs to be transferred, and you have confirmed with the user that they want to be transferred":
+                say("Please hold while I transfer you to a representative who can help")
+                time.sleep(4)
+                transfer("+18009488488")
+            until "The customer is ready to end the call or doesn't need anything else":
+                loop:
+                    res = talk("Ask the customer Before we go, how satisfied were you with this call, from 1 being the lowest to 5 being the best? and wait for their response. Then thank them, and then end the call", True)
+                until "The call should be ended":
+                    say("Thanks for the feedback! Thank you for calling Silver&Fit! It was a pleasure assisting you today. If you have any other questions or need further support, don’t hesitate to reach out. Have a wonderful day!")
+                    time.sleep(13)
+                    end_call()
+        until "The customer wants or needs to be transferred, and you have confirmed with the user they want to be transferred.":
+            say("Please hold while I transfer you to a representative who can help.")
+            time.sleep(4)
+            transfer("+18009488488")
+        until "The customer is ready to end the call or doesn't need anything else":
+            loop:
+                res = talk("Ask the customer Before we go, how satisfied were you with this call, from 1 (low) to 5 (best)? and wait for their response. Then thank them, and then end the call", True)
+            until "The call should be ended":
+                end_call()
+until "The user answers no to “Are you calling about your own Silver & Fit membership?”":
+    loop:
+        res = talk("Which describes you: a family member, a health plan, or a fitness center calling on behalf of a member?", True)
+    until "Caller says they are a health plan":
+        loop:
+            res = talk(GLOBAL_PROMPT + prompt_2, True)
+        until "The customer has provided and confirmed their First name, Last name, 5-digit ZIP, and full date of birth":
+            say("Thank you! Please hold while I look up your member account", exact=True)
+            customer_data = res.ask(question = "What is the customers first name, last name, 5-digit ZIP, and full date of birth? Date of Birth must be in the format YYYY-MM-DD. If they didn't include one of these, make the value 'false' ", example = {"first_name": "Matthew", "last_name": "Koen", "zip": "123456", "dob": "1998-07-30"})
+            first_name = customer_data['first_name']
+            last_name = customer_data['last_name']
+            _zip = customer_data['zip']
+            dob = customer_data['dob']
+            fields = {
+                'first_name': first_name,
+                'last_name': last_name,
+                'zip': _zip,
+                'dob': dob
+                }
+            missing = [key for key, value in fields.items() if value == 'false']
+            provided = [key for key, value in fields.items() if value != 'false']
+            if missing:
+                missing_str = ', '.join(missing)
+                provided_str = ', '.join(provided)
+                message = f"The user didn't provide {missing_str} but did provide these: {provided_str}"
+                return message
+            url = "https://oek6liv3id.execute-api.us-east-1.amazonaws.com/default/ash_fake_api"
+            headers = {"Content-Type": "application/json"}
+            response = api.post_req(url = url, data=fields, headers=headers)
+            error = response.get("data", {}).get("error", None)
+            user_email = ""
+            if error:
+                loop:
+                    res = talk(GLOBAL_PROMPT + f"You used these details for the user: {fields}. Tell the user you were unable to find their account. Gently reconfirm they have a Silver & Fit account. Next, offer to transfer them to a human agent to help further. Confirm with the user first before calling the transfer tool", True)
+                until "The customer wants or needs to be transferred, and you have confirmed with the user they want to be transferred.":
+                    say("Please hold while I transfer you to a representative who can help.")
+                    time.sleep(4)
+                    transfer("+18009488488")
+            loop:
+                res = talk(GLOBAL_PROMPT + f"Here is some data about the user: {response}. Their fitness ID is the ID field" + "Ask the customer something like: Do you need your Fitness ID? I can provide if required. If they ask for their fitness ID, after telling them, say To activate your gym benefit, just bring that Fitness ID to a participating location and tell the front desk you’re joining through Silver & Fit—no membership card required. You should always provide the fitness ID in the format A-0-r-4-5-6-7 or something, always split with a dash between.", True)
+            until "The customer wants or needs to be transferred, and you have confirmed with the user they want to be transferred.":
+                say("Please hold while I transfer you to a representative who can help.")
+                time.sleep(4)
+                transfer("+18009488488")
+            until "The customer is ready to end the call or doesn't need anything else":
+                loop:
+                    res = talk("Ask the customer Before we go, how satisfied were you with this call, from 1 (low) to 5 (best)? and wait for their response. Then thank them, and then end the call", True)
+                until "The call should be ended":
+                    end_call()
+    until "Caller says they are a family member or fitness center":
+        say("Unfortunately I cannot help with this request. Please hold while I transfer you to a representative who can help.")
+        time.sleep(6)        
+        transfer("+18009488488")
